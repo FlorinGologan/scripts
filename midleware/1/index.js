@@ -12,6 +12,7 @@ function secondHandler(request, response, next) {
 
 function thirdHandler(request, response, next) {
   request.usedBy.push("thirdHandler");
+  //return next(request, response);
   return { request, response };
 }
 
@@ -28,11 +29,17 @@ function run(handlers) {
     const partial = (func, next) => (request, response) =>
       func(request, response, next);
 
-    return functions.reverse().reduce((x, y) => partial(y, x), done);
+    return functions
+      .reverse()
+      .reduce((next, func) => partial(func, next), done);
   };
 
   const done = (request, response) => {
-    request, response;
+    console.log("--executed all handlers-");
+    return {
+      request,
+      response,
+    };
   };
 
   const response = makeChain(handlers)(req, res);
